@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { AvailabilityEditor } from "./AvailabilityEditor";
 
+export const dynamic = "force-dynamic";
+
 export default async function AvailabilityPage() {
   const username = process.env.HOST_USERNAME ?? "demo";
   const host = await db.host.findUnique({

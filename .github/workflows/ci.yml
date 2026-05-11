@@ -19,8 +19,13 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
-      - run: npx prisma generate
       - run: cp .env.example .env
+      - run: npx prisma generate
+        env:
+          DATABASE_URL: file:./dev.db
+      - run: npx prisma db push --skip-generate
+        env:
+          DATABASE_URL: file:./dev.db
       - run: npm test
       - run: npm run build
         env:

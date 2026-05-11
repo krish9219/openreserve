@@ -1,5 +1,7 @@
 import { db } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export default async function BookingsPage() {
   const username = process.env.HOST_USERNAME ?? "demo";
   const host = await db.host.findUnique({ where: { username } });
