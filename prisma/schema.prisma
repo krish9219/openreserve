@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Host {
+  id          String   @id @default(cuid())
+  username    String   @unique
+  name        String
+  bio         String?
+  timezone    String   @default("UTC")
+  createdAt   DateTime @default(now())
+  eventTypes  EventType[]
+  availability AvailabilityRule[]
+  bookings    Booking[]
+}
+
+model EventType {
+  id          String   @id @default(cuid())
+  hostId      String
+  slug        String
+  title       String
+  description String?
+  durationMin Int      @default(30)
+  bufferMin   Int      @default(0)
+  active      Boolean  @default(true)
+  host        Host     @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  bookings    Booking[]
+  @@unique([hostId, slug])
+}
+
+model AvailabilityRule {
+  id        String @id @default(cuid())
+  hostId    String
+  dayOfWeek Int    // 0 = Sunday ... 6 = Saturday
+  startMin  Int    // minutes after midnight in host timezone
+  endMin    Int
+  host      Host   @relation(fields: [hostId], references: [id], onDelete: Cascade)
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  hostId      String
+  eventTypeId String
+  inviteeName String
+  inviteeEmail String
+  notes       String?
+  startUtc    DateTime
+  endUtc      DateTime
+  status      String   @default("confirmed") // confirmed | cancelled
+  createdAt   DateTime @default(now())
+  host        Host      @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  eventType   EventType @relation(fields: [eventTypeId], references: [id], onDelete: Cascade)
+  @@index([hostId, startUtc])
+}
