@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { format } from "date-fns";
 import { createBooking } from "@/lib/actions";
 
 export function BookingForm({
@@ -16,7 +17,7 @@ export function BookingForm({
   const groups = useMemo(() => {
     const out = new Map<string, Date[]>();
     for (const s of slots) {
-      const key = s.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+      const key = format(s, "EEE, MMM d");
       const arr = out.get(key) ?? [];
       arr.push(s);
       out.set(key, arr);
@@ -37,7 +38,7 @@ export function BookingForm({
       <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-5">
         <h2 className="font-semibold">You're booked.</h2>
         <p className="text-sm text-black/70 mt-1">
-          {confirmedAt.toLocaleString(undefined, { dateStyle: "full", timeStyle: "short" })} &middot; with {hostUsername}
+          {format(confirmedAt, "EEEE, MMMM d 'at' h:mm a")} &middot; with {hostUsername}
         </p>
       </div>
     );
@@ -87,7 +88,7 @@ export function BookingForm({
                             : "border-black/15 bg-white hover:border-black/40")
                         }
                       >
-                        {s.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+                        {format(s, "h:mm a")}
                       </button>
                     );
                   })}
